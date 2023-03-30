@@ -1,0 +1,18 @@
+#!/bin/sh    
+
+function download_git_folder() {
+  repo_url=$1
+  branch=$2
+  repo_subfolder_path=$3
+  
+  repo_folder=$(basename $repo_url)
+  git init
+  git remote add -f origin ${repo_url}
+  git config core.sparseCheckout true
+  echo "${repo_subfolder_path}" >> .git/info/sparse-checkout
+  git pull origin ${branch}
+  mv "${repo_subfolder_path}"/* ./
+
+  readarray -td/ root_subfolder <<<"${repo_subfolder_path}"; declare -p root_subfolder;
+  rm -rf ./.git ${root_subfolder[0]}
+}
